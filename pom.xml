@@ -16,6 +16,21 @@
     <version>1.0.0</version>
     <name>PromptCoach</name>
     <description>AI 提效教练：把模糊需求变成能出结果的提示词</description>
+    <url>https://github.com/JaneSmith719/prompt-coach</url>
+
+    <licenses>
+        <license>
+            <name>MIT License</name>
+            <url>https://opensource.org/licenses/MIT</url>
+        </license>
+    </licenses>
+
+    <developers>
+        <developer>
+            <id>JaneSmith719</id>
+            <name>xiezhiwei</name>
+        </developer>
+    </developers>
 
     <properties>
         <java.version>17</java.version>

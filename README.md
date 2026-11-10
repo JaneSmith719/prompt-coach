@@ -7,9 +7,7 @@
 [![Tests](https://img.shields.io/badge/tests-25%20passed-brightgreen)](#测试)
 [![License](https://img.shields.io/badge/license-MIT-blue)](LICENSE)
 [![No Key Required](https://img.shields.io/badge/%E6%97%A0%20API%20Key-%E5%8F%AF%E8%BF%90%E8%A1%8C-8b7bff)](#不配置-api-key-也能用)
-
-> 推送仓库后，把上面的徽章换成你自己的 CI 徽章：
-> `![CI](https://github.com/<你的用户名>/prompt-coach/actions/workflows/ci.yml/badge.svg)`
+[![CI](https://github.com/JaneSmith719/prompt-coach/actions/workflows/ci.yml/badge.svg)](https://github.com/JaneSmith719/prompt-coach/actions/workflows/ci.yml)
 
 ---
 
@@ -90,7 +88,7 @@ PromptCoach 不替你聊天，它做三件别的东西：
 环境：JDK 17+、Maven 3.8+
 
 ```bash
-git clone https://github.com/<你的用户名>/prompt-coach.git
+git clone https://github.com/JaneSmith719/prompt-coach.git
 cd prompt-coach
 mvn spring-boot:run
 ```
@@ -286,21 +284,39 @@ docker run -p 8080:8080 -e AI_API_KEY=sk-xxx prompt-coach
 
 ---
 
-## 推送到自己的 GitHub
+## 发布与维护
+
+仓库地址：<https://github.com/JaneSmith719/prompt-coach>
+
+首次推送（已经推过就跳过）：
 
 ```bash
-git remote add origin https://github.com/<你的用户名>/prompt-coach.git
-git branch -M main
+git remote add origin https://github.com/JaneSmith719/prompt-coach.git
 git push -u origin main
 ```
 
-推送后建议做两件事：
+日常提交：
 
-1. 把 README 顶部的徽章换成自己的仓库徽章；
-2. 在仓库 `Settings → Actions → General` 里确认 Workflow 权限为允许（CI 默认就会跑）。
+```bash
+git add -A && git commit -m "feat: xxx" && git push
+```
+
+打版本号（可选，GitHub Release 会自动生成源码压缩包）：
+
+```bash
+git tag -a v1.0.0 -m "首个可用版本"
+git push origin v1.0.0
+```
+
+发布检查清单：
+
+- [ ] Actions 里 `ci` 变绿（首次推送后 1-2 分钟）
+- [ ] 仓库 Settings → Actions → General 允许 Workflow 运行
+- [ ] 提交邮箱 `xiezhiwei@qq.com` 已加到 GitHub 账号，提交才会关联到你的头像
+- [ ] 仓库简介里填一句：把模糊需求变成 AI 能交付的提示词
 
 ---
 
 ## License
 
-[MIT](LICENSE) © 2026 PromptCoach contributors
+[MIT](LICENSE) © 2026 xiezhiwei
