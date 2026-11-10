@@ -2,6 +2,8 @@
 
 const RING_CIRCUMFERENCE = 326.7;
 const GRADE_COLORS = {S: '#34d8c2', A: '#4ade80', B: '#f0b45c', C: '#fb923c', D: '#f87171'};
+/* 分享链接把需求编码进 URL，太长会被聊天工具截断，这里设个上限 */
+const SHARE_MAX_CHARS = 600;
 
 const state = {
     meta: null,
@@ -18,6 +20,12 @@ document.addEventListener('DOMContentLoaded', init);
 async function init() {
     bindEvents();
     await Promise.all([loadMeta(), loadTemplates(), loadHistory()]);
+
+    const shared = readSharedText();
+    if (shared) {
+        $('#input').value = shared;
+        run();
+    }
 }
 
 function bindEvents() {
@@ -35,6 +43,7 @@ function bindEvents() {
         });
     });
     $('#copy').addEventListener('click', copyPrompt);
+    $('#share').addEventListener('click', shareLink);
     $('#clear-history').addEventListener('click', clearHistory);
 }
 
@@ -264,9 +273,61 @@ async function copyPrompt() {
     if (!text) {
         return;
     }
+    await copyText(text, '提示词已复制');
+}
+
+/** 复制分享链接：把当前需求编码进 URL，别人打开就自动诊断 */
+async function shareLink() {
+    const text = $('#input').value.trim();
+    if (!text) {
+        toast('先写一句需求，再复制分享链接');
+        return;
+    }
+    if (text.length > SHARE_MAX_CHARS) {
+        toast(`内容超过 ${SHARE_MAX_CHARS} 字，链接可能被聊天工具截断，建议精简后再分享`);
+        return;
+    }
+    const link = `${window.location.origin}${window.location.pathname}?q=${encodeShare(text)}`;
+    await copyText(link, '分享链接已复制，打开即自动诊断');
+}
+
+/** 读取 ?q= 参数，解不出内容时给个提示而不是白屏 */
+function readSharedText() {
+    const value = new URLSearchParams(window.location.search).get('q');
+    if (!value) {
+        return null;
+    }
+    try {
+        const text = decodeShare(value);
+        return text && text.trim() ? text : null;
+    } catch (error) {
+        toast('分享链接已损坏，请让分享者重新复制');
+        return null;
+    }
+}
+
+/** UTF-8 文本 → Base64URL（去掉 +/= 三种会被 URL 吃掉或被转义的字符） */
+function encodeShare(text) {
+    const bytes = new TextEncoder().encode(text);
+    let binary = '';
+    bytes.forEach((byte) => {
+        binary += String.fromCharCode(byte);
+    });
+    return btoa(binary).replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/, '');
+}
+
+function decodeShare(value) {
+    const normalized = value.replace(/-/g, '+').replace(/_/g, '/');
+    const padded = normalized + '='.repeat((4 - normalized.length % 4) % 4);
+    const binary = atob(padded);
+    const bytes = Uint8Array.from(binary, (char) => char.charCodeAt(0));
+    return new TextDecoder().decode(bytes);
+}
+
+async function copyText(text, message) {
     try {
         await navigator.clipboard.writeText(text);
-        toast('已复制到剪贴板');
+        toast(message || '已复制到剪贴板');
     } catch (error) {
         const helper = document.createElement('textarea');
         helper.value = text;
@@ -274,7 +335,7 @@ async function copyPrompt() {
         helper.select();
         document.execCommand('copy');
         document.body.removeChild(helper);
-        toast('已复制到剪贴板');
+        toast(message || '已复制到剪贴板');
     }
 }
 

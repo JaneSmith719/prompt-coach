@@ -653,6 +653,12 @@ button.chip:hover {
     margin-top: 11px;
 }
 
+.action-group {
+    display: flex;
+    gap: 8px;
+    flex: none;
+}
+
 .ghost {
     appearance: none;
     border: 1px solid var(--border-strong);

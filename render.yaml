@@ -1,0 +1,19 @@
+# Render 一键部署蓝图：仓库连到 Render 后会自动识别这个文件
+# 免费实例会在 15 分钟无访问后休眠，冷启动约 30-60 秒，README 里已写明
+services:
+  - type: web
+    name: prompt-coach
+    runtime: docker
+    plan: free
+    healthCheckPath: /api/meta
+    autoDeploy: true
+    envVars:
+      # 不填也能跑（纯本地规则引擎）；填了才会启用大模型增强
+      - key: AI_API_KEY
+        sync: false
+      - key: AI_BASE_URL
+        value: https://api.deepseek.com/v1
+      - key: AI_MODEL
+        value: deepseek-chat
+      - key: JAVA_OPTS
+        value: -XX:MaxRAMPercentage=70 -Dfile.encoding=UTF-8
