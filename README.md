@@ -265,7 +265,7 @@ docker run -p 8080:8080 -e AI_API_KEY=sk-xxx prompt-coach
 
 ## 设计取舍
 
-写这个工具时刻意做了几个选择，面试时也比较好讲：
+写这个工具时刻意做了几个选择：
 
 - **不把全部逻辑交给大模型**：评分和缺口检测是确定性的规则，离线可跑、可测试、可解释，成本为 0；大模型只做它最擅长的「按结构改写」。
 - **用占位符而不是编内容**：模型很容易把缺失信息补得很像真的。`『待补充：…』` 让「不知道」显式可见，这也是这个工具和普通提示词模板的本质区别。
@@ -287,33 +287,6 @@ docker run -p 8080:8080 -e AI_API_KEY=sk-xxx prompt-coach
 ## 发布与维护
 
 仓库地址：<https://github.com/JaneSmith719/prompt-coach>
-
-首次推送（已经推过就跳过）：
-
-```bash
-git remote add origin https://github.com/JaneSmith719/prompt-coach.git
-git push -u origin main
-```
-
-日常提交：
-
-```bash
-git add -A && git commit -m "feat: xxx" && git push
-```
-
-打版本号（可选，GitHub Release 会自动生成源码压缩包）：
-
-```bash
-git tag -a v1.0.0 -m "首个可用版本"
-git push origin v1.0.0
-```
-
-发布检查清单：
-
-- [ ] Actions 里 `ci` 变绿（首次推送后 1-2 分钟）
-- [ ] 仓库 Settings → Actions → General 允许 Workflow 运行
-- [ ] 提交邮箱 `xiezhiwei@qq.com` 已加到 GitHub 账号，提交才会关联到你的头像
-- [ ] 仓库简介里填一句：把模糊需求变成 AI 能交付的提示词
 
 ---
 
