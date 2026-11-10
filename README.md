@@ -11,6 +11,22 @@
 
 ---
 
+## 界面
+
+输入一句话，右边是场景模板库；点「诊断并优化」立刻拿到评分、缺口和可复制的改写稿。
+
+<p align="center">
+  <img src="docs/screenshots/home.png" alt="首页：输入一句需求，右侧是场景模板库" width="880">
+</p>
+
+<p align="center">
+  <img src="docs/screenshots/result.png" alt="诊断结果：18 分 D 级、五维评分、缺口与三版改写" width="880">
+</p>
+
+<p align="center"><em>「帮我写个周报」→ 18 分 D 级：五维评分、缺口清单与可直接使用的提示词</em></p>
+
+---
+
 ## 这是什么
 
 大多数人用 AI 效率低，不是模型不行，是**需求没写清楚**。
