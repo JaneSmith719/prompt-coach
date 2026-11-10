@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>PromptCoach · AI 提效教练</title>
+    <meta name="description" content="把模糊需求变成 AI 能交付的提示词：五维诊断、缺口可视化、三版改写。">
+    <link rel="icon"
+          href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext y='.9em' font-size='90'%3E%E2%97%86%3C/text%3E%3C/svg%3E">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<header class="topbar">
+    <div class="brand">
+        <span class="logo">◆</span>
+        <span class="brand-name">PromptCoach</span>
+        <span class="brand-sub">AI 提效教练</span>
+    </div>
+    <div class="topbar-right">
+        <span id="mode-badge" class="badge badge-muted">检测环境…</span>
+    </div>
+</header>
+
+<main class="layout">
+
+    <section class="panel input-panel">
+        <h1>把「帮我写个周报」<br>变成 AI 真能交付的指令</h1>
+        <p class="lede">
+            输入你现在的说法，<strong>五维诊断</strong>会指出缺了什么，
+            再给出三版可以直接粘贴使用的提示词。
+        </p>
+
+        <label class="field">
+            <span class="field-label">你的需求</span>
+            <textarea id="input" rows="6" maxlength="4000"
+                      placeholder="例如：帮我写个周报"></textarea>
+        </label>
+
+        <div class="examples">
+            <span class="examples-label">试试：</span>
+            <button type="button" class="chip" data-example="帮我写个周报">帮我写个周报</button>
+            <button type="button" class="chip" data-example="帮我改改论文摘要">帮我改改论文摘要</button>
+            <button type="button" class="chip" data-example="这段代码有 bug 帮我看看">代码报错排查</button>
+            <button type="button" class="chip" data-example="我想两周内学会 Spring 事务，给我个计划">学习计划</button>
+        </div>
+
+        <div class="controls">
+            <label class="switch" title="配置了 AI_API_KEY 才能开启">
+                <input type="checkbox" id="enhance">
+                <span>大模型增强</span>
+            </label>
+            <span id="enhance-hint" class="hint"></span>
+            <button id="run" class="primary" type="button">诊断并优化<kbd>Ctrl ↵</kbd></button>
+        </div>
+
+        <div id="error" class="error hidden" role="alert"></div>
+    </section>
+
+    <section id="result" class="panel result hidden">
+        <div class="score-row">
+            <div class="score-ring">
+                <svg viewBox="0 0 120 120" aria-hidden="true">
+                    <circle class="ring-bg" cx="60" cy="60" r="52"></circle>
+                    <circle id="ring-fg" class="ring-fg" cx="60" cy="60" r="52"></circle>
+                </svg>
+                <div class="score-text">
+                    <span id="score">0</span>
+                    <small>/ 100</small>
+                </div>
+            </div>
+            <div class="score-meta">
+                <div class="grade-line">
+                    <span id="grade" class="grade">B</span>
+                    <span class="grade-label">提示词质量</span>
+                </div>
+                <p id="summary" class="summary"></p>
+                <div class="meta-chips">
+                    <span id="coverage" class="chip static"></span>
+                    <span id="elapsed" class="chip static"></span>
+                    <span id="mode-chip" class="chip static"></span>
+                </div>
+            </div>
+        </div>
+
+        <div id="notice" class="notice hidden"></div>
+
+        <div id="dims" class="dims"></div>
+
+        <div class="two-col">
+            <div class="block">
+                <h3>还缺什么</h3>
+                <ul id="gaps" class="gaps-list"></ul>
+            </div>
+            <div class="block">
+                <h3>回答这几个就能补上</h3>
+                <ul id="questions" class="questions-list"></ul>
+            </div>
+        </div>
+
+        <div class="prompt-card">
+            <div class="tabs" id="tabs"></div>
+            <pre id="prompt-text" class="prompt-text"></pre>
+            <div class="prompt-actions">
+                <span id="placeholder-hint" class="hint"></span>
+                <button id="copy" class="ghost" type="button">复制</button>
+            </div>
+        </div>
+
+        <div class="block">
+            <h3>提效建议</h3>
+            <ul id="advice" class="advice-list"></ul>
+        </div>
+
+        <div class="block">
+            <h3>下一步</h3>
+            <ol id="next" class="next-list"></ol>
+        </div>
+    </section>
+
+    <aside class="panel side">
+        <div class="side-head">
+            <h2>场景模板</h2>
+            <span id="template-count" class="muted"></span>
+        </div>
+        <div id="templates" class="template-list"></div>
+
+        <div class="side-head">
+            <h2>最近诊断</h2>
+            <button id="clear-history" class="link-btn" type="button">清空</button>
+        </div>
+        <ul id="history" class="history-list"></ul>
+    </aside>
+
+</main>
+
+<footer class="footer">
+    <span>规则引擎本地运行，不联网也能用</span>
+    <span class="dot">·</span>
+    <span>配置 <code>AI_API_KEY</code> 后自动启用大模型增强</span>
+</footer>
+
+<div id="toast" class="toast hidden"></div>
+
+<script src="app.js"></script>
+</body>
+</html>

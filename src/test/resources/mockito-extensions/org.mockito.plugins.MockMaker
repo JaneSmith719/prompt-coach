@@ -1,0 +1,3 @@
+# 使用 subclass mock maker，避免 Mockito 依赖 JVM 动态 attach。
+# 受限环境（禁止自附加 agent）下 Spring Boot 的 ResetMocks 监听器也能正常初始化。
+mock-maker-subclass

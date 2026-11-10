@@ -1,0 +1,25 @@
+server:
+  port: 8080
+  compression:
+    enabled: true
+
+spring:
+  application:
+    name: prompt-coach
+  jackson:
+    default-property-inclusion: non_null
+
+# 全部支持环境变量覆盖：AI_API_KEY / AI_BASE_URL / AI_MODEL
+coach:
+  max-input-chars: 4000
+  history-limit: 50
+  llm:
+    enabled: true
+    base-url: ${AI_BASE_URL:https://api.deepseek.com/v1}
+    api-key: ${AI_API_KEY:}
+    model: ${AI_MODEL:deepseek-chat}
+    timeout-seconds: 40
+
+logging:
+  level:
+    com.promptcoach: INFO

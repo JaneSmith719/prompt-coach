@@ -1,0 +1,29 @@
+# 构建产物
+target/
+!.mvn/wrapper/maven-wrapper.jar
+
+# IDE
+.idea/
+*.iml
+*.ipr
+*.iws
+.vscode/
+.settings/
+.classpath
+.project
+*.code-workspace
+
+# 系统
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# 日志与本地配置
+*.log
+logs/
+.env
+.env.local
+
+# 临时文件
+*.tmp
+*.bak
