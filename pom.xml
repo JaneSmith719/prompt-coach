@@ -13,7 +13,7 @@
 
     <groupId>com.promptcoach</groupId>
     <artifactId>prompt-coach</artifactId>
-    <version>1.2.0</version>
+    <version>1.2.1</version>
     <name>PromptCoach</name>
     <description>AI 提效教练：把模糊需求变成能出结果的提示词</description>
     <url>https://github.com/JaneSmith719/prompt-coach</url>

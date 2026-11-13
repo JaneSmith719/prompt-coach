@@ -62,31 +62,32 @@ public class PromptBuilder {
     }
 
     /**
-     * 整句版：把要求收成一段连续文字，没有标题、没有分节，复制后可直接粘给 AI。
+     * 整句版：直接给出一段完整、可复制的优化指令，不出现「待补充」占位符。
      *
-     * <p>用户已经写清楚的背景/约束/输出不重复改写，只做三件事：
-     * 补上缺失的角色、提示还缺哪些信息、追加一句通用的质量要求。</p>
+     * <p>缺失的信息用通用要求补齐：角色缺失时用「经验丰富的行业专家」，
+     * 背景不足时要求 AI 先确认，约束/格式缺失时给最小可用的默认要求。
+     * 真正需要用户补充的项仍会通过 {@code placeholders} 单独提示。</p>
      */
     private String complete(String text, String role, boolean taskWeak,
                             boolean contextMissing, boolean constraintMissing, boolean outputMissing) {
         StringBuilder sb = new StringBuilder();
         if (role == null) {
-            sb.append(TODO_OPEN).append("AI 的专业身份，例如「资深 Java 后端工程师」』。");
+            sb.append("你是一名经验丰富的行业专家。");
         }
         sb.append(oneLine(text).replaceAll("(?<=[。！？；：]) +", ""));
         appendSentenceEnd(sb);
 
         if (taskWeak) {
-            appendClause(sb, "最终交付物请写具体，例如「一份 800 字以内的周报初稿」。");
+            appendClause(sb, "请交付一份可以直接使用的成品。");
         }
         if (contextMissing) {
-            appendClause(sb, "背景：" + TODO_OPEN + "谁会用这份结果、为什么做、现在进行到哪一步』。");
+            appendClause(sb, "如需更多背景，请先向我确认，不要自行编造。");
         }
         if (constraintMissing) {
-            appendClause(sb, "约束：" + TODO_OPEN + "字数、语气、绝对不能出现的内容』。");
+            appendClause(sb, "请保持简洁、具体，避免空话。");
         }
         if (outputMissing) {
-            appendClause(sb, "输出：" + TODO_OPEN + "段落 / 分点清单 / Markdown 表格，以及大概多少字』。");
+            appendClause(sb, "请用分点或表格展开。");
         }
 
         appendClause(sb, "请先给结论，再给必要细节；不确定的信息标注「待确认」，不要编造数据或引用。");

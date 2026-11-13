@@ -18,13 +18,17 @@ class PromptBuilderTest {
     @Test
     @DisplayName("模糊需求会被写出占位符，并列出待补充项")
     void weakPromptLeavesPlaceholders() {
-        String text = "帮我写个周报";
+        String text = "帮我弄个周报";
         Diagnosis diagnosis = analyzer.analyze(text);
 
         PromptBuilder.BuiltPrompts built = builder.build(text, diagnosis);
 
         assertThat(built.structured()).contains(PromptBuilder.TODO_OPEN);
-        assertThat(built.complete()).contains(PromptBuilder.TODO_OPEN).contains("背景：");
+        assertThat(built.complete())
+                .doesNotContain(PromptBuilder.TODO_OPEN)
+                .contains("经验丰富的行业专家")
+                .contains("请交付一份可以直接使用的成品")
+                .contains("如需更多背景");
         assertThat(built.placeholders()).isNotEmpty();
         assertThat(built.placeholders()).contains("角色身份");
     }

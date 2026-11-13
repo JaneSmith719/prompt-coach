@@ -1,4 +1,4 @@
-# v1.2.0 手动验收清单
+# v1.2.1 手动验收清单
 
 自动化测试覆盖了后端行为；下面这些交互/浏览器相关项需要在发布前手动走一遍。
 
@@ -6,7 +6,7 @@
 
 ```bash
 mvn -DskipTests package
-java -jar target/prompt-coach-1.2.0.jar
+java -jar target/prompt-coach-1.2.1.jar
 ```
 
 浏览器打开 <http://localhost:8080>，建议同时开一个隐身窗口做会话隔离测试。
@@ -17,7 +17,8 @@ java -jar target/prompt-coach-1.2.0.jar
 
 - [ ] 不配置 `AI_API_KEY`，输入「帮我写个周报」并诊断。
 - [ ] 看到分数、五维评分、缺口、提示词、建议；结果区显示「本地规则引擎」。
-- [ ] 结果区第一个 tab 是「整句版」，内容是一段连续文字，没有 `# 角色`、`# 任务` 这类标题；点「复制」后粘到输入框，能直接读到完整句子。
+- [ ] 结果区第一个 tab 是「整句版」，内容是一段完整句子，没有 `# 角色`、`# 任务` 标题，也没有 `『待补充』`；点「复制」后能直接粘给 AI。
+- [ ] 把「整句版」粘到输入框再诊断：分数可能变高，因为通用要求已经补齐了角色/约束/格式，但不会伪造你的真实背景。
 - [ ] 勾选「大模型增强」后诊断，报告出现「没有配置 AI_API_KEY」提示，仍然有完整结果。
 
 ### 2. 90+ 样例
@@ -69,7 +70,7 @@ java -jar target/prompt-coach-1.2.0.jar
 ```powershell
 $env:AI_API_KEY="sk-xxx"
 $env:COACH_ENHANCE_PER_SESSION_PER_HOUR="1"
-java -jar target/prompt-coach-1.2.0.jar
+java -jar target/prompt-coach-1.2.1.jar
 ```
 
 - [ ] 第一次勾选增强：模式为「大模型增强」。
@@ -94,6 +95,6 @@ java -jar target/prompt-coach-1.2.0.jar
 - [ ] `mvn -B -ntp verify` 通过（42 个测试）
 - [ ] `node --check src/main/resources/static/app.js` 通过
 - [ ] 上述 1–10 通过
-- [ ] `/api/meta` 返回 `version: 1.2.0`
+- [ ] `/api/meta` 返回 `version: 1.2.1`
 - [ ] README、CHANGELOG、截图已更新
-- [ ] `git tag v1.2.0` 已推送
+- [ ] `git tag v1.2.1` 已推送

@@ -5,7 +5,7 @@
 [![Java](https://img.shields.io/badge/Java-17-orange)](https://openjdk.org/projects/jdk/17/)
 [![Spring Boot](https://img.shields.io/badge/Spring%20Boot-3.2.5-brightgreen)](https://spring.io/projects/spring-boot)
 [![Tests](https://img.shields.io/badge/tests-42%20passed-brightgreen)](#测试)
-[![Version](https://img.shields.io/badge/version-1.2.0-8b7bff)](#)
+[![Version](https://img.shields.io/badge/version-1.2.1-8b7bff)](#)
 [![License](https://img.shields.io/badge/license-MIT-blue)](LICENSE)
 [![No Key Required](https://img.shields.io/badge/%E6%97%A0%20API%20Key-%E5%8F%AF%E8%BF%90%E8%A1%8C-8b7bff)](#不配置-api-key-也能用)
 [![CI](https://github.com/JaneSmith719/prompt-coach/actions/workflows/ci.yml/badge.svg)](https://github.com/JaneSmith719/prompt-coach/actions/workflows/ci.yml)
@@ -35,8 +35,8 @@
 PromptCoach 不替你聊天，它做三件别的东西：
 
 1. **五维诊断**：角色 / 任务 / 背景 / 约束 / 输出格式，逐项打分，并指出「哪一句话缺了什么」。
-2. **缺口可视化**：把缺失的信息变成 `『待补充：…』` 占位符，而不是空泛地说「能再详细点吗」。
-3. **多版改写**：整句版、结构化版、极简版、反问版，选模板时再加一版「模板骨架版」，直接复制就能用。其中「整句版」没有标题和分节，是一段连续文字，最适合直接粘进聊天框。
+2. **缺口可视化**：结构化版把缺失的信息变成 `『待补充：…』` 占位符，而不是空泛地说「能再详细点吗」；整句版则用通用要求补齐，保证复制即用。
+3. **多版改写**：整句版、结构化版、极简版、反问版，选模板时再加一版「模板骨架版」，直接复制就能用。其中「整句版」没有标题和分节，是一段连续文字，缺失项用通用要求补齐，不出现 `『待补充』`，最适合直接粘进聊天框。
 
 **不需要任何 API Key 也能完整运行**——评分和建议全部由本地规则引擎完成，大模型只是可选的「增强」。
 
@@ -91,8 +91,8 @@ PromptCoach 不替你聊天，它做三件别的东西：
 | 特性 | 说明 |
 | --- | --- |
 | **五维诊断** | 规则引擎逐维打分，每一分都有「为什么」的证据 |
-| **缺口可视化** | 缺失信息显示为占位符，不会替你脑补 |
-| **多版改写** | 整句 / 结构化 / 极简 / 反问四版；套用模板时追加「模板骨架版」；「整句版」为默认首屏，复制即用 |
+| **缺口可视化** | 结构化版把缺失信息显示为占位符，不会替你脑补；整句版则用通用要求补齐，直接可复制 |
+| **多版改写** | 整句 / 结构化 / 极简 / 反问四版；套用模板时追加「模板骨架版」；「整句版」为默认首屏，缺失项已用通用要求补齐 |
 | **90+ 样例** | 周报、代码审查、论文润色三个五要素齐全的示例，实测均为 100 分，点一下就能看到满分需求长什么样 |
 | **场景模板真正生效** | 周报、论文润色、代码审查、报错定位、面试准备、学习计划、汇报大纲、求职邮件、技术选型；骨架和提示会进入报告 |
 | **收藏夹 + Markdown 导出** | 报告快照存在浏览器 `localStorage`，刷新不丢，可单条/全部导出 |
@@ -148,7 +148,7 @@ mvn spring-boot:run
 
 ```bash
 mvn -DskipTests package
-java -jar target/prompt-coach-1.2.0.jar
+java -jar target/prompt-coach-1.2.1.jar
 ```
 
 ### 不配置 API Key 也能用
@@ -314,7 +314,7 @@ node --check src/main/resources/static/app.js   # 前端语法检查
 
 ```bash
 mvn -DskipTests package
-AI_API_KEY=sk-xxx java -jar target/prompt-coach-1.2.0.jar
+AI_API_KEY=sk-xxx java -jar target/prompt-coach-1.2.1.jar
 ```
 
 **方式二：Docker**
@@ -327,7 +327,7 @@ docker run -p 8080:8080 -e AI_API_KEY=sk-xxx prompt-coach
 
 **方式三：免费云平台**（Railway / Render / Fly.io）
 
-1. 仓库连上去，构建命令 `mvn -DskipTests package`，启动命令 `java -jar target/prompt-coach-1.2.0.jar`；
+1. 仓库连上去，构建命令 `mvn -DskipTests package`，启动命令 `java -jar target/prompt-coach-1.2.1.jar`；
 2. 在平台的环境变量里加 `AI_API_KEY`（不加也能跑，只是没有增强模式）；建议同时设置增强配额，保护共享 Key；
 3. 平台通常会自动注入 `PORT`，本项目已支持 `--server.port`，在启动命令后追加 `--server.port=$PORT` 即可；
 4. 免费实例休眠/重启会清空内存历史；收藏夹在用户浏览器里，不受影响。多实例部署时历史不共享，本版按单实例设计。
@@ -339,7 +339,7 @@ docker run -p 8080:8080 -e AI_API_KEY=sk-xxx prompt-coach
 写这个工具时刻意做了几个选择：
 
 - **不把全部逻辑交给大模型**：评分和缺口检测是确定性的规则，离线可跑、可测试、可解释，成本为 0；大模型只做它最擅长的「按结构改写」。
-- **用占位符而不是编内容**：模型很容易把缺失信息补得很像真的。`『待补充：…』` 让「不知道」显式可见，这也是这个工具和普通提示词模板的本质区别。
+- **用占位符而不是编内容**：模型很容易把缺失信息补得很像真的。结构化版用 `『待补充：…』` 让「不知道」显式可见；整句版则用「经验丰富的行业专家」「如需更多背景请先确认」这类通用要求补齐，保证复制即可用，同时不伪造用户的事实。
 - **降级优先**：没配 Key、超时、接口 500、增强配额超限，都必须返回可用结果，而不是把异常抛给用户——`CoachService` 里的 `notice` 字段就是干这个的。
 - **历史按会话隔离，而不是全局共享**：公开 Demo 不能把 A 的输入展示给 B。用 `HttpSession` + 内存 LRU 实现，不引数据库；代价是重启/换浏览器会丢，适合“最近几条”的定位。
 - **收藏放浏览器，不放服务端**：收藏是私人数据，放 `localStorage` 既省掉账号/数据库，也避免公开实例上的隐私问题；用 Markdown 导出解决跨设备/清缓存。

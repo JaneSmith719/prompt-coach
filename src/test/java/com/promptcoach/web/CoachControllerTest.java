@@ -80,7 +80,7 @@ class CoachControllerTest {
         mockMvc.perform(get("/api/meta"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.name").value("PromptCoach"))
-                .andExpect(jsonPath("$.version").value("1.2.0"))
+                .andExpect(jsonPath("$.version").value("1.2.1"))
                 .andExpect(jsonPath("$.llmAvailable").value(false))
                 .andExpect(jsonPath("$.enhancePerHour").value(10));
     }

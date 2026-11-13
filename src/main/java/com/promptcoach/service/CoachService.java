@@ -185,7 +185,7 @@ public class CoachService {
         }
         variants.add(new PromptVariant(
                 "整句版",
-                "一段连续文字，没有标题和分节，直接复制给 AI",
+                "一段完整可复制的优化指令，没有标题和分节；缺的信息用通用要求补齐",
                 built.complete()));
         variants.add(new PromptVariant(
                 enhanced ? "本地结构化版" : "结构化版",

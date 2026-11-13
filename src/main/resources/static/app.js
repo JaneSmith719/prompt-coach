@@ -263,7 +263,7 @@ function render(report) {
 
     const hint = $('#placeholder-hint');
     hint.textContent = report.placeholders && report.placeholders.length
-        ? `还有 ${report.placeholders.length} 处待补充：${report.placeholders.join('、')}`
+        ? `整句版已用通用要求补齐；还有 ${report.placeholders.length} 处可补充：${report.placeholders.join('、')}`
         : '五要素已齐全，可直接使用';
     updateFavoriteButton();
 }

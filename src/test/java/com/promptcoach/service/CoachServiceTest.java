@@ -175,7 +175,7 @@ class CoachServiceTest {
 
         assertThat(service.templates()).isNotEmpty();
         assertThat(service.meta()).containsEntry("llmAvailable", false);
-        assertThat(service.meta()).containsEntry("version", "1.2.0");
+        assertThat(service.meta()).containsEntry("version", "1.2.1");
         assertThat(service.meta()).containsEntry("enhancePerHour", 10);
     }
 
