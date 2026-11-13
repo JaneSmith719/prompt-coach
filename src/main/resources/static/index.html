@@ -4,7 +4,7 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>PromptCoach · AI 提效教练</title>
-    <meta name="description" content="把模糊需求变成 AI 能交付的提示词：五维诊断、缺口可视化、三版改写。">
+    <meta name="description" content="把模糊需求变成 AI 能交付的提示词：五维诊断、缺口可视化、整句/结构化/极简/反问多版改写。">
     <link rel="icon"
           href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext y='.9em' font-size='90'%3E%E2%97%86%3C/text%3E%3C/svg%3E">
     <link rel="stylesheet" href="style.css">
@@ -28,7 +28,7 @@
         <h1>把「帮我写个周报」<br>变成 AI 真能交付的指令</h1>
         <p class="lede">
             输入你现在的说法，<strong>五维诊断</strong>会指出缺了什么，
-            再给出三版可以直接粘贴使用的提示词。
+            再给出四版可以直接粘贴使用的提示词；第一版「整句版」没有标题和分节，复制就能用。
         </p>
 
         <label class="field">
@@ -43,6 +43,15 @@
             <button type="button" class="chip" data-example="帮我改改论文摘要">帮我改改论文摘要</button>
             <button type="button" class="chip" data-example="这段代码有 bug 帮我看看">代码报错排查</button>
             <button type="button" class="chip" data-example="我想两周内学会 Spring 事务，给我个计划">学习计划</button>
+        </div>
+        <div class="examples examples-high">
+            <span class="examples-label">90+ 样例：</span>
+            <button type="button" class="chip chip-high" data-template="weekly-report"
+                    title="五要素齐全的周报需求，实测 90 分以上">周报 · 90+</button>
+            <button type="button" class="chip chip-high" data-template="code-review"
+                    title="带代码、背景、约束和输出格式的审查需求，实测 90 分以上">代码审查 · 90+</button>
+            <button type="button" class="chip chip-high" data-template="paper-polish"
+                    title="带原文、受众和修改要求的润色需求，实测 90 分以上">论文润色 · 90+</button>
         </div>
         <div id="template-active" class="template-active hidden"></div>
 

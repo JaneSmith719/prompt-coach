@@ -727,9 +727,11 @@ function toMarkdown(report) {
         appendMarkdownList(lines, diagnosis.questions, '');
     }
 
-    lines.push('', '## 推荐提示词', '', fenced(report.structuredPrompt || ''), '');
+    const primary = (report.variants && report.variants[0])
+        || {label: '结构化版', prompt: report.structuredPrompt || ''};
+    lines.push('', `## 推荐提示词 · ${primary.label}`, '', fenced(primary.prompt || ''), '');
 
-    const others = (report.variants || []).filter((variant) => variant.prompt !== report.structuredPrompt);
+    const others = (report.variants || []).filter((variant) => variant.prompt !== primary.prompt);
     if (others.length) {
         lines.push('## 其他版本', '');
         others.forEach((variant) => {

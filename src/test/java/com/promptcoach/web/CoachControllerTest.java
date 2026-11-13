@@ -30,7 +30,7 @@ class CoachControllerTest {
     private MockMvc mockMvc;
 
     @Test
-    @DisplayName("POST /api/coach 返回诊断、三版提示词和建议")
+    @DisplayName("POST /api/coach 返回诊断、四版提示词和建议")
     void coachReturnsReport() throws Exception {
         mockMvc.perform(post("/api/coach")
                         .contentType(MediaType.APPLICATION_JSON)
@@ -40,7 +40,8 @@ class CoachControllerTest {
                 .andExpect(jsonPath("$.mode").value("local"))
                 .andExpect(jsonPath("$.diagnosis.score").isNumber())
                 .andExpect(jsonPath("$.diagnosis.grade").isString())
-                .andExpect(jsonPath("$.variants.length()").value(3))
+                .andExpect(jsonPath("$.variants.length()").value(4))
+                .andExpect(jsonPath("$.variants[0].label").value("整句版"))
                 .andExpect(jsonPath("$.structuredPrompt").isNotEmpty())
                 .andExpect(jsonPath("$.elapsedMs").isNumber());
     }
@@ -79,7 +80,7 @@ class CoachControllerTest {
         mockMvc.perform(get("/api/meta"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.name").value("PromptCoach"))
-                .andExpect(jsonPath("$.version").value("1.1.0"))
+                .andExpect(jsonPath("$.version").value("1.2.0"))
                 .andExpect(jsonPath("$.llmAvailable").value(false))
                 .andExpect(jsonPath("$.enhancePerHour").value(10));
     }
@@ -95,7 +96,7 @@ class CoachControllerTest {
                 .andExpect(jsonPath("$.templateId").value("weekly-report"))
                 .andExpect(jsonPath("$.templateName").value("周报总结"))
                 .andExpect(jsonPath("$.templateTips.length()").value(3))
-                .andExpect(jsonPath("$.variants.length()").value(4));
+                .andExpect(jsonPath("$.variants.length()").value(5));
     }
 
     @Test
@@ -107,7 +108,7 @@ class CoachControllerTest {
                         .content("{\"text\":\"帮我写个周报\",\"templateId\":\"not-exist\"}"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.templateName").doesNotExist())
-                .andExpect(jsonPath("$.variants.length()").value(3))
+                .andExpect(jsonPath("$.variants.length()").value(4))
                 .andExpect(jsonPath("$.notice").value(containsString("不存在")));
     }
 

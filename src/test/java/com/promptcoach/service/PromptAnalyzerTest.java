@@ -2,8 +2,11 @@ package com.promptcoach.service;
 
 import com.promptcoach.model.Diagnosis;
 import com.promptcoach.model.DimensionScore;
+import com.promptcoach.model.Template;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+
+import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -92,6 +95,20 @@ class PromptAnalyzerTest {
     void questionsAreCapped() {
         assertThat(analyzer.analyze("写个东西").questions()).hasSizeLessThanOrEqualTo(5);
         assertThat(analyzer.analyze(WEAK).questions()).hasSizeLessThanOrEqualTo(5);
+    }
+
+    @Test
+    @DisplayName("模板库里的 90+ 样例必须真的达到 90 分")
+    void highScoreSamplesReachNinety() {
+        TemplateLibrary library = new TemplateLibrary();
+
+        for (String id : List.of("weekly-report", "code-review", "paper-polish")) {
+            Template template = library.find(id).orElseThrow();
+            Diagnosis diagnosis = analyzer.analyze(template.example());
+            assertThat(diagnosis.score())
+                    .as("模板 %s 的示例分数", id)
+                    .isGreaterThanOrEqualTo(90);
+        }
     }
 
     private DimensionScore dimension(Diagnosis diagnosis, String key) {

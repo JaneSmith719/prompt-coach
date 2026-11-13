@@ -24,6 +24,7 @@ class PromptBuilderTest {
         PromptBuilder.BuiltPrompts built = builder.build(text, diagnosis);
 
         assertThat(built.structured()).contains(PromptBuilder.TODO_OPEN);
+        assertThat(built.complete()).contains(PromptBuilder.TODO_OPEN).contains("背景：");
         assertThat(built.placeholders()).isNotEmpty();
         assertThat(built.placeholders()).contains("角色身份");
     }
@@ -43,14 +44,21 @@ class PromptBuilderTest {
         assertThat(built.placeholders()).isEmpty();
         assertThat(built.structured()).contains("你是资深 Java 后端工程师。");
         assertThat(built.structured()).doesNotContain(PromptBuilder.TODO_OPEN);
+        assertThat(built.complete())
+                .doesNotContain(PromptBuilder.TODO_OPEN)
+                .doesNotContain("\n")
+                .doesNotContain("# 角色")
+                .contains("你是资深 Java 后端工程师")
+                .contains("请先给结论");
     }
 
     @Test
-    @DisplayName("三种版本都包含原意，且结构完整")
+    @DisplayName("四种版本都包含原意，且结构完整")
     void variantsAreComplete() {
         String text = "帮我写个周报";
         PromptBuilder.BuiltPrompts built = builder.build(text, analyzer.analyze(text));
 
+        assertThat(built.complete()).contains(text).doesNotContain("# ");
         assertThat(built.structured()).contains("# 角色", "# 任务", "# 背景", "# 约束", "# 输出格式");
         assertThat(built.minimal()).contains("作为").contains("输出：");
         assertThat(built.questioning()).contains("先不要直接给答案").contains(text);

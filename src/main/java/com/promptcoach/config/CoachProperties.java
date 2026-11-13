@@ -24,7 +24,7 @@ public class CoachProperties {
      * 服务版本号。打包后优先读取 jar manifest 的 Implementation-Version，
      * 这个值只是 IDE / 单元测试里的回退。
      */
-    private String version = "1.1.0";
+    private String version = "1.2.0";
 
     private final Llm llm = new Llm();
     private final Enhance enhance = new Enhance();

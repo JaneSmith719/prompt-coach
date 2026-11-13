@@ -238,6 +238,26 @@ button.chip:hover {
     cursor: default;
 }
 
+.examples-high {
+    margin-top: -6px;
+}
+
+.examples-high .examples-label {
+    color: var(--accent-2, #34d8c2);
+}
+
+.chip-high {
+    color: #8ef0df;
+    border-color: rgba(52, 216, 194, 0.32);
+    background: rgba(52, 216, 194, 0.08);
+}
+
+button.chip-high:hover {
+    color: #c9fff6;
+    border-color: rgba(52, 216, 194, 0.6);
+    background: rgba(52, 216, 194, 0.14);
+}
+
 .controls {
     display: flex;
     align-items: center;

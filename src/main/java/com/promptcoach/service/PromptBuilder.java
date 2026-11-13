@@ -54,10 +54,65 @@ public class PromptBuilder {
         }
 
         return new BuiltPrompts(
+                complete(text, role, taskWeak, contextMissing, constraintMissing, outputMissing),
                 structured(text, role, taskWeak, contextMissing, constraintMissing, outputMissing),
                 minimal(text, role, outputMissing, constraintMissing),
                 questioning(text),
                 placeholders);
+    }
+
+    /**
+     * 整句版：把要求收成一段连续文字，没有标题、没有分节，复制后可直接粘给 AI。
+     *
+     * <p>用户已经写清楚的背景/约束/输出不重复改写，只做三件事：
+     * 补上缺失的角色、提示还缺哪些信息、追加一句通用的质量要求。</p>
+     */
+    private String complete(String text, String role, boolean taskWeak,
+                            boolean contextMissing, boolean constraintMissing, boolean outputMissing) {
+        StringBuilder sb = new StringBuilder();
+        if (role == null) {
+            sb.append(TODO_OPEN).append("AI 的专业身份，例如「资深 Java 后端工程师」』。");
+        }
+        sb.append(oneLine(text).replaceAll("(?<=[。！？；：]) +", ""));
+        appendSentenceEnd(sb);
+
+        if (taskWeak) {
+            appendClause(sb, "最终交付物请写具体，例如「一份 800 字以内的周报初稿」。");
+        }
+        if (contextMissing) {
+            appendClause(sb, "背景：" + TODO_OPEN + "谁会用这份结果、为什么做、现在进行到哪一步』。");
+        }
+        if (constraintMissing) {
+            appendClause(sb, "约束：" + TODO_OPEN + "字数、语气、绝对不能出现的内容』。");
+        }
+        if (outputMissing) {
+            appendClause(sb, "输出：" + TODO_OPEN + "段落 / 分点清单 / Markdown 表格，以及大概多少字』。");
+        }
+
+        appendClause(sb, "请先给结论，再给必要细节；不确定的信息标注「待确认」，不要编造数据或引用。");
+        return sb.toString();
+    }
+
+    private static void appendClause(StringBuilder sb, String clause) {
+        if (sb.isEmpty()) {
+            sb.append(clause);
+            return;
+        }
+        char last = sb.charAt(sb.length() - 1);
+        if ("。！？；：".indexOf(last) < 0 && last != '\n') {
+            sb.append(' ');
+        }
+        sb.append(clause);
+    }
+
+    private static void appendSentenceEnd(StringBuilder sb) {
+        if (sb.isEmpty()) {
+            return;
+        }
+        char last = sb.charAt(sb.length() - 1);
+        if ("。！？.!?".indexOf(last) < 0) {
+            sb.append('。');
+        }
     }
 
     private String structured(String text, String role, boolean taskWeak,
@@ -152,11 +207,16 @@ public class PromptBuilder {
     }
 
     /**
-     * 三个版本的改写结果。
+     * 四个版本的改写结果。
      *
+     * @param complete     整句版：一段连续文字，直接复制给 AI
+     * @param structured   结构化版：按角色/任务/背景/约束/输出分段
+     * @param minimal      极简版：一行说完
+     * @param questioning  反问版：先问清关键信息再动手
      * @param placeholders 仍未完成的维度名，前端用来提示「还有 3 处要你填」
      */
     public record BuiltPrompts(
+            String complete,
             String structured,
             String minimal,
             String questioning,

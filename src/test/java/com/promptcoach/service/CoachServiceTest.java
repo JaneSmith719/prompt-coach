@@ -38,7 +38,10 @@ class CoachServiceTest {
         assertThat(report.llmEnhanced()).isFalse();
         assertThat(report.diagnosis().score()).isPositive();
         assertThat(report.structuredPrompt()).isNotBlank();
-        assertThat(report.variants()).hasSize(3);
+        assertThat(report.variants()).hasSize(4);
+        assertThat(report.variants().get(0).label()).isEqualTo("整句版");
+        assertThat(report.variants().get(0).prompt()).doesNotContain("# ");
+        assertThat(report.variants().get(1).label()).isEqualTo("结构化版");
         assertThat(report.advice()).isNotEmpty();
         assertThat(report.nextSteps()).isNotEmpty();
         assertThat(report.coverage()).isBetween(0, 5);
@@ -65,8 +68,9 @@ class CoachServiceTest {
         assertThat(report.mode()).isEqualTo("llm");
         assertThat(report.llmEnhanced()).isTrue();
         assertThat(report.structuredPrompt()).contains("资深产品经理");
-        assertThat(report.variants()).hasSize(4);
+        assertThat(report.variants()).hasSize(5);
         assertThat(report.variants().get(0).label()).contains("增强");
+        assertThat(report.variants().get(1).label()).isEqualTo("整句版");
         assertThat(report.model()).isEqualTo("stub-model");
     }
 
@@ -108,9 +112,13 @@ class CoachServiceTest {
         assertThat(report.templateId()).isEqualTo("weekly-report");
         assertThat(report.templateName()).isEqualTo("周报总结");
         assertThat(report.templateTips()).hasSize(3);
-        assertThat(report.variants()).hasSize(4);
+        assertThat(report.variants()).hasSize(5);
         assertThat(report.variants()).anyMatch(variant -> variant.label().equals("模板骨架版"));
-        assertThat(report.variants().get(1).prompt())
+        assertThat(report.variants().stream()
+                .filter(variant -> variant.label().equals("模板骨架版"))
+                .findFirst()
+                .orElseThrow()
+                .prompt())
                 .contains("周报总结")
                 .contains("【本周记录】");
     }
@@ -122,7 +130,7 @@ class CoachServiceTest {
                 .coach(new CoachRequest("帮我写个周报", false, "not-exist"), "session-a");
 
         assertThat(report.templateName()).isNull();
-        assertThat(report.variants()).hasSize(3);
+        assertThat(report.variants()).hasSize(4);
         assertThat(report.notice()).contains("不存在");
     }
 
@@ -167,7 +175,7 @@ class CoachServiceTest {
 
         assertThat(service.templates()).isNotEmpty();
         assertThat(service.meta()).containsEntry("llmAvailable", false);
-        assertThat(service.meta()).containsEntry("version", "1.1.0");
+        assertThat(service.meta()).containsEntry("version", "1.2.0");
         assertThat(service.meta()).containsEntry("enhancePerHour", 10);
     }
 

@@ -177,13 +177,20 @@ public class CoachService {
                                         boolean enhanced,
                                         Template template) {
         List<PromptVariant> variants = new ArrayList<>();
-        variants.add(new PromptVariant(
-                enhanced ? "LLM 增强版" : "结构化版",
-                enhanced ? "由大模型重写，通常更完整" : "五要素齐全，可直接粘贴使用",
-                mainPrompt));
         if (enhanced) {
-            variants.add(new PromptVariant("本地结构化版", "规则引擎拼装，完全可预测", built.structured()));
+            variants.add(new PromptVariant(
+                    "LLM 增强版",
+                    "由大模型重写，通常更完整",
+                    mainPrompt));
         }
+        variants.add(new PromptVariant(
+                "整句版",
+                "一段连续文字，没有标题和分节，直接复制给 AI",
+                built.complete()));
+        variants.add(new PromptVariant(
+                enhanced ? "本地结构化版" : "结构化版",
+                enhanced ? "规则引擎拼装，完全可预测" : "五要素齐全，可直接粘贴使用",
+                built.structured()));
         if (template != null) {
             variants.add(new PromptVariant(
                     "模板骨架版",

@@ -4,8 +4,8 @@
 
 [![Java](https://img.shields.io/badge/Java-17-orange)](https://openjdk.org/projects/jdk/17/)
 [![Spring Boot](https://img.shields.io/badge/Spring%20Boot-3.2.5-brightgreen)](https://spring.io/projects/spring-boot)
-[![Tests](https://img.shields.io/badge/tests-41%20passed-brightgreen)](#测试)
-[![Version](https://img.shields.io/badge/version-1.1.0-8b7bff)](#)
+[![Tests](https://img.shields.io/badge/tests-42%20passed-brightgreen)](#测试)
+[![Version](https://img.shields.io/badge/version-1.2.0-8b7bff)](#)
 [![License](https://img.shields.io/badge/license-MIT-blue)](LICENSE)
 [![No Key Required](https://img.shields.io/badge/%E6%97%A0%20API%20Key-%E5%8F%AF%E8%BF%90%E8%A1%8C-8b7bff)](#不配置-api-key-也能用)
 [![CI](https://github.com/JaneSmith719/prompt-coach/actions/workflows/ci.yml/badge.svg)](https://github.com/JaneSmith719/prompt-coach/actions/workflows/ci.yml)
@@ -14,7 +14,7 @@
 
 ## 界面
 
-输入一句话，右边是场景模板库和只存在本浏览器的收藏夹；点「诊断并优化」立刻拿到评分、缺口和可复制的改写稿。
+输入一句话，右边是场景模板库和只存在本浏览器的收藏夹；点「诊断并优化」立刻拿到评分、缺口和可复制的改写稿。不知道怎么写满分需求时，直接点「90+ 样例」里的周报、代码审查、论文润色，三个示例实测都是 100 分。
 
 <p align="center">
   <img src="docs/screenshots/home.png" alt="首页：输入一句需求，右侧是场景模板库与收藏夹" width="880">
@@ -24,7 +24,7 @@
   <img src="docs/screenshots/result.png" alt="诊断结果：评分、五维评分、缺口与多版改写" width="880">
 </p>
 
-<p align="center"><em>「帮我写个周报」→ 18 分 D 级：五维评分、缺口清单与可直接使用的提示词</em></p>
+<p align="center"><em>「周报总结」90+ 样例 → 100 分 S 级：五维评分、模板提示与「整句版 / 结构化版 / 模板骨架版 / 极简版 / 反问版」</em></p>
 
 ---
 
@@ -36,7 +36,7 @@ PromptCoach 不替你聊天，它做三件别的东西：
 
 1. **五维诊断**：角色 / 任务 / 背景 / 约束 / 输出格式，逐项打分，并指出「哪一句话缺了什么」。
 2. **缺口可视化**：把缺失的信息变成 `『待补充：…』` 占位符，而不是空泛地说「能再详细点吗」。
-3. **多版改写**：结构化版、极简版、反问版，选模板时再加一版「模板骨架版」，直接复制就能用。
+3. **多版改写**：整句版、结构化版、极简版、反问版，选模板时再加一版「模板骨架版」，直接复制就能用。其中「整句版」没有标题和分节，是一段连续文字，最适合直接粘进聊天框。
 
 **不需要任何 API Key 也能完整运行**——评分和建议全部由本地规则引擎完成，大模型只是可选的「增强」。
 
@@ -92,7 +92,8 @@ PromptCoach 不替你聊天，它做三件别的东西：
 | --- | --- |
 | **五维诊断** | 规则引擎逐维打分，每一分都有「为什么」的证据 |
 | **缺口可视化** | 缺失信息显示为占位符，不会替你脑补 |
-| **多版改写** | 结构化 / 极简 / 反问三版；套用模板时追加「模板骨架版」 |
+| **多版改写** | 整句 / 结构化 / 极简 / 反问四版；套用模板时追加「模板骨架版」；「整句版」为默认首屏，复制即用 |
+| **90+ 样例** | 周报、代码审查、论文润色三个五要素齐全的示例，实测均为 100 分，点一下就能看到满分需求长什么样 |
 | **场景模板真正生效** | 周报、论文润色、代码审查、报错定位、面试准备、学习计划、汇报大纲、求职邮件、技术选型；骨架和提示会进入报告 |
 | **收藏夹 + Markdown 导出** | 报告快照存在浏览器 `localStorage`，刷新不丢，可单条/全部导出 |
 | **会话级历史** | 每个浏览器只看自己的最近诊断，换浏览器或清 Cookie 不会串数据 |
@@ -100,7 +101,7 @@ PromptCoach 不替你聊天，它做三件别的东西：
 | **分享链接** | 需求编码进 URL，`/?q=…&t=…` 打开即自动诊断并套用模板，服务端零存储 |
 | **大模型可选增强** | 任意 OpenAI 兼容接口（DeepSeek / OpenAI / 通义 / Kimi），失败自动降级 |
 | **增强配额** | 单会话每小时 10 次、全站每小时 200 次、并发 2，保护公开实例的 Key |
-| **可解释、可测试** | 纯函数式的规则实现，41 个单元 + 集成测试锁定行为 |
+| **可解释、可测试** | 纯函数式的规则实现，42 个单元 + 集成测试锁定行为 |
 
 ### 收藏夹与历史记录
 
@@ -147,7 +148,7 @@ mvn spring-boot:run
 
 ```bash
 mvn -DskipTests package
-java -jar target/prompt-coach-1.1.0.jar
+java -jar target/prompt-coach-1.2.0.jar
 ```
 
 ### 不配置 API Key 也能用
@@ -268,12 +269,12 @@ curl -X POST http://localhost:8080/api/coach \
 ## 测试
 
 ```bash
-mvn test          # 41 个用例
+mvn test          # 42 个用例
 mvn verify        # 打包 + 测试
 node --check src/main/resources/static/app.js   # 前端语法检查
 ```
 
-覆盖点：五维评分边界、模糊词扣分、占位符生成、模板骨架、三种降级路径（没 Key / 接口报错 / 配额超限）、会话历史隔离与 LRU、增强配额窗口/并发、接口 400/404 语义、静态首页可达。
+覆盖点：五维评分边界、模糊词扣分、占位符生成、整句版无标题输出、90+ 样例分数下限、模板骨架、三种降级路径（没 Key / 接口报错 / 配额超限）、会话历史隔离与 LRU、增强配额窗口/并发、接口 400/404 语义、静态首页可达。
 
 > 仓库里的 `src/test/resources/mockito-extensions/` 是一个兼容性配置：Mockito 默认的 inline mock maker 需要 JVM 动态 attach，在部分受限环境（容器、CI 沙箱）会初始化失败，切换到 subclass mock maker 可以稳定运行。本项目测试本身不使用 Mockito。
 
@@ -313,7 +314,7 @@ node --check src/main/resources/static/app.js   # 前端语法检查
 
 ```bash
 mvn -DskipTests package
-AI_API_KEY=sk-xxx java -jar target/prompt-coach-1.1.0.jar
+AI_API_KEY=sk-xxx java -jar target/prompt-coach-1.2.0.jar
 ```
 
 **方式二：Docker**
@@ -326,7 +327,7 @@ docker run -p 8080:8080 -e AI_API_KEY=sk-xxx prompt-coach
 
 **方式三：免费云平台**（Railway / Render / Fly.io）
 
-1. 仓库连上去，构建命令 `mvn -DskipTests package`，启动命令 `java -jar target/prompt-coach-1.1.0.jar`；
+1. 仓库连上去，构建命令 `mvn -DskipTests package`，启动命令 `java -jar target/prompt-coach-1.2.0.jar`；
 2. 在平台的环境变量里加 `AI_API_KEY`（不加也能跑，只是没有增强模式）；建议同时设置增强配额，保护共享 Key；
 3. 平台通常会自动注入 `PORT`，本项目已支持 `--server.port`，在启动命令后追加 `--server.port=$PORT` 即可；
 4. 免费实例休眠/重启会清空内存历史；收藏夹在用户浏览器里，不受影响。多实例部署时历史不共享，本版按单实例设计。
