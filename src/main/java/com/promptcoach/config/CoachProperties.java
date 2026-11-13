@@ -11,10 +11,23 @@ public class CoachProperties {
     /** 单次输入允许的最大字符数，防止超长文本打爆模型上下文 */
     private int maxInputChars = 4000;
 
-    /** 内存中保留的历史记录条数 */
+    /** 单个会话保留的历史记录条数 */
     private int historyLimit = 50;
 
+    /**
+     * 最多跟踪多少个浏览器会话（历史记录 + 增强限流共用）。
+     * 超出后按 LRU 淘汰，避免内存无限增长。
+     */
+    private int maxSessions = 200;
+
+    /**
+     * 服务版本号。打包后优先读取 jar manifest 的 Implementation-Version，
+     * 这个值只是 IDE / 单元测试里的回退。
+     */
+    private String version = "1.1.0";
+
     private final Llm llm = new Llm();
+    private final Enhance enhance = new Enhance();
 
     public int getMaxInputChars() {
         return maxInputChars;
@@ -32,8 +45,77 @@ public class CoachProperties {
         this.historyLimit = historyLimit;
     }
 
+    public int getMaxSessions() {
+        return maxSessions;
+    }
+
+    public void setMaxSessions(int maxSessions) {
+        this.maxSessions = maxSessions;
+    }
+
+    public String getVersion() {
+        return version;
+    }
+
+    public void setVersion(String version) {
+        this.version = version;
+    }
+
     public Llm getLlm() {
         return llm;
+    }
+
+    public Enhance getEnhance() {
+        return enhance;
+    }
+
+    /**
+     * 大模型增强的配额。默认值面向公开 Demo：单会话每小时 10 次、
+     * 全站每小时 200 次、同时最多 2 个增强请求。
+     *
+     * <p>0 表示关闭对应的限制；enabled=false 时完全不限流。</p>
+     */
+    public static class Enhance {
+
+        private boolean enabled = true;
+
+        private int perSessionPerHour = 10;
+
+        private int globalPerHour = 200;
+
+        private int maxConcurrent = 2;
+
+        public boolean isEnabled() {
+            return enabled;
+        }
+
+        public void setEnabled(boolean enabled) {
+            this.enabled = enabled;
+        }
+
+        public int getPerSessionPerHour() {
+            return perSessionPerHour;
+        }
+
+        public void setPerSessionPerHour(int perSessionPerHour) {
+            this.perSessionPerHour = perSessionPerHour;
+        }
+
+        public int getGlobalPerHour() {
+            return globalPerHour;
+        }
+
+        public void setGlobalPerHour(int globalPerHour) {
+            this.globalPerHour = globalPerHour;
+        }
+
+        public int getMaxConcurrent() {
+            return maxConcurrent;
+        }
+
+        public void setMaxConcurrent(int maxConcurrent) {
+            this.maxConcurrent = maxConcurrent;
+        }
     }
 
     /**

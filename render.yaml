@@ -15,5 +15,12 @@ services:
         value: https://api.deepseek.com/v1
       - key: AI_MODEL
         value: deepseek-chat
+      # 公开实例的成本保护：超限自动降级为本地规则
+      - key: COACH_ENHANCE_PER_SESSION_PER_HOUR
+        value: "10"
+      - key: COACH_ENHANCE_GLOBAL_PER_HOUR
+        value: "200"
+      - key: COACH_ENHANCE_MAX_CONCURRENT
+        value: "2"
       - key: JAVA_OPTS
         value: -XX:MaxRAMPercentage=70 -Dfile.encoding=UTF-8

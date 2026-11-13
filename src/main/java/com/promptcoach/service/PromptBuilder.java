@@ -2,6 +2,7 @@ package com.promptcoach.service;
 
 import com.promptcoach.model.Diagnosis;
 import com.promptcoach.model.DimensionScore;
+import com.promptcoach.model.Template;
 import com.promptcoach.support.Signals;
 import org.springframework.stereotype.Component;
 
@@ -114,6 +115,24 @@ public class PromptBuilder {
                 等我回答后，先给我一个提纲，我确认后再展开写。
 
                 我的需求：""" + oneLine(text);
+    }
+
+    /**
+     * 场景模板骨架版：不替用户打分，也不改动诊断结果，
+     * 只把模板自带的五要素骨架作为“可填写的参考答案”附在报告里。
+     */
+    public String templatePrompt(Template template) {
+        if (template == null) {
+            return "";
+        }
+        return """
+                # 场景：%s
+
+                下面是这个场景的完整骨架。把「…」换成你的真实信息；
+                不确定的写「待确认」，不要删掉你看不懂的部分。
+
+                %s
+                """.formatted(template.name(), template.skeleton().trim());
     }
 
     private static String oneLine(String text) {

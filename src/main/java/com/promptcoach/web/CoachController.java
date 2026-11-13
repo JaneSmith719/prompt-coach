@@ -5,6 +5,7 @@ import com.promptcoach.model.CoachRequest;
 import com.promptcoach.model.HistoryEntry;
 import com.promptcoach.model.Template;
 import com.promptcoach.service.CoachService;
+import jakarta.servlet.http.HttpSession;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -22,10 +23,13 @@ import java.util.Map;
  * <pre>
  * POST /api/coach        诊断 + 改写（body: {text, enhance?, templateId?}）
  * GET  /api/templates    场景模板库
- * GET  /api/history      最近记录
- * DEL  /api/history      清空记录
- * GET  /api/meta         运行信息（是否已接大模型）
+ * GET  /api/history      当前浏览器会话的最近记录
+ * DEL  /api/history      清空当前会话的记录
+ * GET  /api/meta         运行信息（版本、是否已接大模型、增强配额）
  * </pre>
+ *
+ * <p>历史记录以 {@link HttpSession} 隔离：Cookie 被禁用时历史为空，
+ * 但诊断本身不受影响。</p>
  */
 @RestController
 @RequestMapping("/api")
@@ -38,8 +42,8 @@ public class CoachController {
     }
 
     @PostMapping("/coach")
-    public CoachReport coach(@RequestBody(required = false) CoachRequest request) {
-        return coachService.coach(request);
+    public CoachReport coach(@RequestBody(required = false) CoachRequest request, HttpSession session) {
+        return coachService.coach(request, session.getId());
     }
 
     @GetMapping("/templates")
@@ -48,13 +52,13 @@ public class CoachController {
     }
 
     @GetMapping("/history")
-    public List<HistoryEntry> history(@RequestParam(defaultValue = "10") int limit) {
-        return coachService.history(Math.min(Math.max(limit, 1), 50));
+    public List<HistoryEntry> history(@RequestParam(defaultValue = "10") int limit, HttpSession session) {
+        return coachService.history(session.getId(), Math.min(Math.max(limit, 1), 50));
     }
 
     @DeleteMapping("/history")
-    public Map<String, Object> clearHistory() {
-        coachService.clearHistory();
+    public Map<String, Object> clearHistory(HttpSession session) {
+        coachService.clearHistory(session.getId());
         return Map.of("cleared", true);
     }
 

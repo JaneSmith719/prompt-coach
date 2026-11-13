@@ -1,6 +1,7 @@
 package com.promptcoach.service;
 
 import com.promptcoach.model.Diagnosis;
+import com.promptcoach.model.Template;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
@@ -62,5 +63,18 @@ class PromptBuilderTest {
         PromptBuilder.BuiltPrompts built = builder.build(text, analyzer.analyze(text));
 
         assertThat(built.minimal()).doesNotContain("\n");
+    }
+
+    @Test
+    @DisplayName("模板骨架版保留场景名和完整骨架，不参与评分")
+    void templatePromptKeepsSkeleton() {
+        Template template = new TemplateLibrary().find("weekly-report").orElseThrow();
+
+        String prompt = builder.templatePrompt(template);
+
+        assertThat(prompt).contains("场景：周报总结");
+        assertThat(prompt).contains("【本周记录】");
+        assertThat(prompt).contains("下周计划");
+        assertThat(prompt).contains("把「…」换成你的真实信息");
     }
 }

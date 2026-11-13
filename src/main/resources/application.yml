@@ -2,6 +2,14 @@ server:
   port: 8080
   compression:
     enabled: true
+  servlet:
+    session:
+      # 历史记录按会话隔离：换浏览器/清 Cookie 就看不到了，但诊断照常可用
+      timeout: 12h
+      cookie:
+        name: PC_SESSION
+        http-only: true
+        same-site: lax
 
 spring:
   application:
@@ -9,16 +17,24 @@ spring:
   jackson:
     default-property-inclusion: non_null
 
-# 全部支持环境变量覆盖：AI_API_KEY / AI_BASE_URL / AI_MODEL
+# 全部支持环境变量覆盖：
+# AI_API_KEY / AI_BASE_URL / AI_MODEL
+# COACH_ENHANCE_PER_SESSION_PER_HOUR / COACH_ENHANCE_GLOBAL_PER_HOUR / COACH_ENHANCE_MAX_CONCURRENT
 coach:
   max-input-chars: 4000
   history-limit: 50
+  max-sessions: 200
   llm:
     enabled: true
     base-url: ${AI_BASE_URL:https://api.deepseek.com/v1}
     api-key: ${AI_API_KEY:}
     model: ${AI_MODEL:deepseek-chat}
     timeout-seconds: 40
+  enhance:
+    enabled: true
+    per-session-per-hour: ${COACH_ENHANCE_PER_SESSION_PER_HOUR:10}
+    global-per-hour: ${COACH_ENHANCE_GLOBAL_PER_HOUR:200}
+    max-concurrent: ${COACH_ENHANCE_MAX_CONCURRENT:2}
 
 logging:
   level:

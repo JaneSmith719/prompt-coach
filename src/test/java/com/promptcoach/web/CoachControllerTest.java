@@ -6,8 +6,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
+import org.springframework.mock.web.MockHttpSession;
 import org.springframework.test.web.servlet.MockMvc;
 
+import static org.hamcrest.Matchers.containsString;
 import static org.hamcrest.Matchers.greaterThan;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
@@ -77,27 +79,88 @@ class CoachControllerTest {
         mockMvc.perform(get("/api/meta"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.name").value("PromptCoach"))
-                .andExpect(jsonPath("$.llmAvailable").value(false));
+                .andExpect(jsonPath("$.version").value("1.1.0"))
+                .andExpect(jsonPath("$.llmAvailable").value(false))
+                .andExpect(jsonPath("$.enhancePerHour").value(10));
     }
 
     @Test
-    @DisplayName("历史记录可以读取，也能清空")
-    void historyCanBeListedAndCleared() throws Exception {
+    @DisplayName("选中的模板会出现在报告里，并多一个骨架版")
+    void templateIdIsApplied() throws Exception {
         mockMvc.perform(post("/api/coach")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .characterEncoding("UTF-8")
+                        .content("{\"text\":\"帮我写个周报\",\"templateId\":\"weekly-report\"}"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.templateId").value("weekly-report"))
+                .andExpect(jsonPath("$.templateName").value("周报总结"))
+                .andExpect(jsonPath("$.templateTips.length()").value(3))
+                .andExpect(jsonPath("$.variants.length()").value(4));
+    }
+
+    @Test
+    @DisplayName("未知模板按通用规则诊断，不返回 400")
+    void unknownTemplateFallsBack() throws Exception {
+        mockMvc.perform(post("/api/coach")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .characterEncoding("UTF-8")
+                        .content("{\"text\":\"帮我写个周报\",\"templateId\":\"not-exist\"}"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.templateName").doesNotExist())
+                .andExpect(jsonPath("$.variants.length()").value(3))
+                .andExpect(jsonPath("$.notice").value(containsString("不存在")));
+    }
+
+    @Test
+    @DisplayName("历史记录按浏览器会话隔离，清空不影响其他会话")
+    void historyIsIsolatedBetweenSessions() throws Exception {
+        MockHttpSession sessionA = new MockHttpSession();
+        MockHttpSession sessionB = new MockHttpSession();
+
+        mockMvc.perform(post("/api/coach")
+                        .session(sessionA)
                         .contentType(MediaType.APPLICATION_JSON)
                         .characterEncoding("UTF-8")
                         .content("{\"text\":\"帮我写个周报\"}"))
                 .andExpect(status().isOk());
 
-        mockMvc.perform(get("/api/history").param("limit", "5"))
+        mockMvc.perform(get("/api/history").session(sessionB))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.length()").value(0));
+
+        mockMvc.perform(get("/api/history").session(sessionA))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.length()").value(greaterThan(0)));
 
-        mockMvc.perform(delete("/api/history"))
+        mockMvc.perform(delete("/api/history").session(sessionA))
+                .andExpect(status().isOk());
+
+        mockMvc.perform(get("/api/history").session(sessionA))
+                .andExpect(jsonPath("$.length()").value(0));
+        mockMvc.perform(get("/api/history").session(sessionB))
+                .andExpect(jsonPath("$.length()").value(0));
+    }
+
+    @Test
+    @DisplayName("历史记录可以读取，也能清空")
+    void historyCanBeListedAndCleared() throws Exception {
+        MockHttpSession session = new MockHttpSession();
+        mockMvc.perform(post("/api/coach")
+                        .session(session)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .characterEncoding("UTF-8")
+                        .content("{\"text\":\"帮我写个周报\"}"))
+                .andExpect(status().isOk());
+
+        mockMvc.perform(get("/api/history").session(session).param("limit", "5"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.length()").value(greaterThan(0)));
+
+        mockMvc.perform(delete("/api/history").session(session))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.cleared").value(true));
 
-        mockMvc.perform(get("/api/history"))
+        mockMvc.perform(get("/api/history").session(session))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.length()").value(0));
     }
@@ -107,7 +170,7 @@ class CoachControllerTest {
     void indexPageIsServed() throws Exception {
         mockMvc.perform(get("/index.html"))
                 .andExpect(status().isOk())
-                .andExpect(content().string(org.hamcrest.Matchers.containsString("PromptCoach")));
+                .andExpect(content().string(containsString("PromptCoach")));
 
         // 访问根路径时由 WelcomePageHandlerMapping 转发到 index.html
         mockMvc.perform(get("/"))
